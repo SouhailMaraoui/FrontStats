@@ -1,52 +1,31 @@
 import React, {Component} from 'react';
-import axios from 'axios';
-import {Table, Button} from 'reactstrap';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import './App.scss';
 
-class App extends Component {
-  state = {
-    cooperatives:[]
-  }
+const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
-  componentWillMount() {
-    axios.get('http://costats.ew.r.appspot.com/cooperative/all/')
-        .then((response) =>{
-      this.setState({
-          cooperatives: response.data
-      })
-    });
-  }
+
+const DefaultLayout = React.lazy(() => import('./containers/DefaultLayout'));
+
+// Pages
+const Page404 = React.lazy(() => import('./views/Pages/Page404'));
+const Page500 = React.lazy(() => import('./views/Pages/Page500'));
+
+class App extends Component
+{
 
   render() {
-    let cooperatives = this.state.cooperatives.map((cooperative)=>{
-      return (
-          <tr key={cooperative.id}>
-            <td>{cooperative.id}</td>
-            <td>{cooperative.nomCooperative}</td>
-            <td>{cooperative.motDePasse}</td>
-            <td>
-              <Button color="success" size='sm'>Update</Button>
-              <Button color="danger" size='sm'>Delete</Button>
-            </td>
-          </tr>
-      )
-    });
-    return (
-        <div className="App container">
-          <Table>
-            <thead>
-            <tr>
-              <th>#</th>
-              <th>nom Cooperative</th>
-              <th>mot De Passe</th>
-              <th>Actions</th>
-            </tr>
-            </thead>
 
-            <tbody>
-                {cooperatives}
-            </tbody>
-          </Table>
-        </div>
+    return (
+        <HashRouter>
+            <React.Suspense fallback={loading()}>
+                <Switch>
+                    <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>} />
+                    <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
+                    <Route path="/" name="Home" render={props => <DefaultLayout {...props}/>} />
+                </Switch>
+            </React.Suspense>
+        </HashRouter>
     );
   }
 }
