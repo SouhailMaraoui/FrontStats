@@ -31,7 +31,7 @@ class Login extends Component {
                       </InputGroup>
                       <Row>
                         <Col xs="6">
-                          <Button color="white" className="px-4 btn btn-outline-primary">Connexion</Button>
+                          <Button href="#/Account" color="white" className="px-4 btn btn-outline-primary">Connexion</Button>
                         </Col>
                       </Row>
                     </Form>
