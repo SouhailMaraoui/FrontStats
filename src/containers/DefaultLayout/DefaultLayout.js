@@ -1,9 +1,16 @@
 import React, { Component, Suspense } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import * as router from 'react-router-dom';
+import { Container, Col } from 'reactstrap';
 
 import {
   AppFooter,
   AppHeader,
+  AppBreadcrumb2 as AppBreadcrumb,
 } from '@coreui/react';
+
+import routes from '../../routes';
+import Row from "reactstrap/es/Row";
 
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
@@ -25,6 +32,38 @@ class DefaultLayout extends Component {
             <DefaultHeader onLogout={e=>this.signOut(e)}/>
           </Suspense>
         </AppHeader>
+
+        <div className="app-body">
+          <main className="main">
+            <Container fluid={true}>
+              <Row className="mt-3">
+                <div className="col-sm"/>
+                <div className="col-10">
+                  <Suspense fallback={this.loading()}>
+                    <Switch>
+                      {routes.map((route, idx) => {
+                        return route.component ? (
+                            <Route
+                                key={idx}
+                                path={route.path}
+                                exact={route.exact}
+                                name={route.name}
+                                render={props => (
+                                    <route.component {...props} />
+                                )} />
+                        ) : (null);
+                      })}
+                      <Redirect from="/" to="/Home" />
+                    </Switch>
+                  </Suspense>
+                </div>
+                <div className="col-sm"/>
+              </Row>
+
+            </Container>
+          </main>
+        </div>
+
 
         <AppFooter>
           <Suspense fallback={this.loading()}>

@@ -9,14 +9,12 @@ const defaultProps = {};
 
 class DefaultFooter extends Component {
   render() {
-
-    // eslint-disable-next-line
     const { children, ...attributes } = this.props;
 
     return (
       <React.Fragment>
-        <span><a href="https://coreui.io">CoreUI</a> &copy; 2020 creativeLabs.</span>
-        <span className="ml-auto">Powered by <a href="https://coreui.io/react">CoreUI for React</a></span>
+        <span>CoStats &copy;2020 <a target="_blank" href="https://i.kym-cdn.com/photos/images/original/001/693/402/3b6.png">WhatIsLife</a>.</span>
+        <span className="ml-auto">Powered by <a target="_blank" href="https://en.wikipedia.org/wiki/Anxiety">Anxiety</a></span>
       </React.Fragment>
     );
   }
