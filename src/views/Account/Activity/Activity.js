@@ -10,6 +10,7 @@ class Activity extends Component {
         this.toggleAccordion = this.toggleAccordion.bind(this);
 
         this.state = {
+            year:0,
             activeTab: new Array(1).fill('1'),
             activeIndex:1,
             accordion: [
@@ -438,7 +439,7 @@ class Activity extends Component {
         return (
             <div className="flex-row align-items-center">
                 <Container>
-
+                    {console.log(this.props.location.search)}
                     <Row className="mt-n2 mb-2 justify-content-center">
                         <Col>
                             <div className="text-center">
