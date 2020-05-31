@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
 import { Bar, Line, Doughnut} from 'react-chartjs-2';
+import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import {
   Card,
   CardBody,
@@ -12,8 +13,6 @@ import {
   ButtonGroup,
   Collapse, Button,
 } from 'reactstrap';
-import {Link} from "react-router-dom";
-import CardFooter from "reactstrap/es/CardFooter";
 
 const cardChartData3 = {
   labels: ['1','2','3', '4', '5', '6', '7', '8', '9'],
@@ -29,6 +28,7 @@ const cardChartData3 = {
 const cardChartOpts1 = {
   tooltips: {
     enabled: false,
+    custom: CustomTooltips
   },
   maintainAspectRatio: false,
   legend: {
@@ -72,6 +72,7 @@ const cardChartOpts1 = {
 const cardChartOpts3 = {
   tooltips: {
     enabled: false,
+    custom: CustomTooltips
   },
   maintainAspectRatio: false,
   legend: {
@@ -101,6 +102,7 @@ const cardChartOpts3 = {
 const cardChartOpts4 = {
   tooltips: {
     enabled: false,
+    custom: CustomTooltips
   },
   maintainAspectRatio: false,
   legend: {
@@ -155,16 +157,23 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acc12:false,
+      acc12:true,
       accordion12: [true, false],
       displayStyle12:["display:block;","display:none;"],
       colors1:["warning","light"],
       colors2:["danger","light"],
 
-      acc3:false,
+      acc3:true,
       accordion3: [true, false,false],
       displayStyle3:["display:block;","display:none;","display:none;"],
       colors3:["primary","light","light"],
+
+      acc4:true,
+      accordion4: [true, false],
+      displayStyle4:["display:block;","display:none;"],
+      colors4:["dark","light"],
+
+      acc567:true,
 
       coopParSecteur:this.CoopParSecteur(),
       coopParRegion:this.CoopParRegion(),
@@ -176,6 +185,12 @@ class Dashboard extends Component {
       adherentParRegion:this.AdherentParRegion(),
       adherentParSexe:this.AdherentParSexe(),
 
+      vente:this.Vente(),
+      communication:this.Communication(),
+      canal:this.Canal(),
+      formation:this.Formation(),
+      evenement:this.Evenement(),
+
       coopsTable:this.CoopsTable(),
     };
   }
@@ -183,90 +198,151 @@ class Dashboard extends Component {
   toggleAccordion12() {
     this.setState({
       acc12:!this.state.acc12,
+      acc3:!this.state.acc3,
     })
   }
-  toggleSubAccordion12(tab) {
-    const prevState = this.state.accordion12;
-    if (prevState[tab] === false){
-      const state = prevState.map((x, index) => tab === index ? !x : false);
-      let prevDisp=["display:none;","display:none;"];
-      let prevColor1=["light","light"];
-      let prevColor2=["light","light"];
-      prevDisp[tab]="display:block;";
-      prevColor1[tab]=["warning"];
-      prevColor2[tab]=["danger"];
+  toggleSubAccordionMain12(tab) {
+    let prevState = this.state.accordion12;
+    const state = prevState.map((x, index) => tab === index ? !x : false);
+    let prevDisp=["display:none;","display:none;"];
+    let prevColor1=["light","light"];
+    let prevColor2=["light","light"];
+    prevDisp[tab]="display:block;";
+    prevColor1[tab]=["warning"];
+    prevColor2[tab]=["danger"];
 
-      this.setState({
-        tooltipOpen: [false, false],
-        accordion12: state,
-        displayStyle12:prevDisp,
-        colors1:prevColor1,
-        colors2:prevColor2,
-      });
-    }
-    else
-    {
+    this.setState({
+      accordion12: state,
+      displayStyle12:prevDisp,
+      colors1:prevColor1,
+      colors2:prevColor2,
+    });
+  }
+  toggleSubAccordion12(tab) {
+    this.toggleSubAccordion3(tab);
+    let prevState = this.state.accordion12;
+    if (prevState[tab] === true){
       this.setState({
         acc12: !this.state.acc12,
+        acc3:!this.state.acc3,
       });
     }
-  }
-
-  toggle(i) {
-    const newArray = this.state.tooltipOpen.map((element, index) => {
-      return (index === i ? !element : false);
-    });
-    this.setState({
-      tooltipOpen: newArray,
-    });
   }
 
   toggleAccordion3() {
     this.setState({
+      acc12:!this.state.acc12,
       acc3:!this.state.acc3,
     })
   }
   toggleSubAccordion3(tab) {
-    const prevState = this.state.accordion3;
+    if(tab<2 && this.state.accordion12[tab]===false)
+    {
+      this.toggleSubAccordionMain12(tab);
+    }
+    let prevState = this.state.accordion3;
     if (prevState[tab] === false){
       const state = prevState.map((x, index) => tab === index ? !x : false);
       let prevDisp=["display:none;","display:none;","display:none;"];
-      let prevColor=["light","light","light"];
-      prevColor[tab]=["primary"];
+      let prevColor3=["light","light","light"];
+
+      prevColor3[tab]=["primary"];
       prevDisp[tab]="display:block;";
+
       this.setState({
         accordion3: state,
         displayStyle3:prevDisp,
-        colors3:prevColor,
+        colors3:prevColor3,
       });
     }
     else
     {
       this.setState({
         acc3: !this.state.acc3,
+        acc12:!this.state.acc12,
       });
     }
+  }
+
+  toggleAccordion4() {
+    this.setState({
+      acc4:!this.state.acc4,
+      acc567:!this.state.acc567,
+    })
+  }
+  toggleSubAccordion4(tab) {
+    let prevState = this.state.accordion4;
+    if (prevState[tab] === false){
+      const state = prevState.map((x, index) => tab === index ? !x : false);
+      let prevDisp=["display:none;","display:none;"];
+      let prevColor4=["light","light"];
+
+      prevColor4[tab]=["dark"];
+      prevDisp[tab]="display:block;";
+
+      this.setState({
+        accordion4: state,
+        displayStyle4:prevDisp,
+        colors4:prevColor4,
+      });
+    }
+    else
+    {
+      this.setState({
+        acc567:!this.state.acc567,
+        acc4: !this.state.acc4,
+      });
+    }
+  }
+
+  toggleAccordion567() {
+    this.setState({
+      acc567:!this.state.acc567,
+      acc4:!this.state.acc4,
+    })
   }
 
   CoopParSecteur(){
     return(
         <ul>
-          <div className="progress-group">
+          <div className="progress-group ml-n5">
             <div className="progress-group-header">
               <span className="title">Secteur</span>
               <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="warning" value="56" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
-          <div className="progress-group">
+          <div className="progress-group ml-n5">
             <div className="progress-group-header">
               <span className="title">Secteur</span>
               <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="warning" value="15" />
+              <Progress className="progress-xs" color="white" value="100" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Secteur</span>
+              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="warning" value="56" />
+              <Progress className="progress-xs" color="white" value="100" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Secteur</span>
+              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="warning" value="15" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
         </ul>
@@ -282,6 +358,7 @@ class Dashboard extends Component {
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="warning" value="80" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
           <div className="progress-group">
@@ -291,6 +368,7 @@ class Dashboard extends Component {
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="warning" value="5" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
         </ul>
@@ -300,22 +378,44 @@ class Dashboard extends Component {
   ProfitParSecteur(){
     return(
         <ul>
-          <div className="progress-group">
+          <div className="progress-group ml-n5">
             <div className="progress-group-header">
               <span className="title">Secteur</span>
               <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="danger" value="56" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
-          <div className="progress-group">
+          <div className="progress-group ml-n5">
             <div className="progress-group-header">
               <span className="title">Secteur</span>
               <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="danger" value="15" />
+              <Progress className="progress-xs" color="white" value="100" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Secteur</span>
+              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+            </div>
+            <div className="progress-group-bars ">
+              <Progress className="progress-xs" color="danger" value="56" />
+              <Progress className="progress-xs" color="white" value="100" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Secteur</span>
+              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="danger" value="15" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
         </ul>
@@ -331,15 +431,16 @@ class Dashboard extends Component {
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="danger" value="80" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
           <div className="progress-group">
             <div className="progress-group-header">
               <span className="title">Région</span>
-              <span className="ml-auto font-weight-bold">5,223 <span className="text-muted small">(15%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="danger" value="5" />
+              <Progress className="progress-xs" color="white" value="100" />
             </div>
           </div>
         </ul>
@@ -349,21 +450,45 @@ class Dashboard extends Component {
   AdherentParSecteur(){
     return(
         <ul>
-          <div className="progress-group mb-4">
-            <div className="progress-group-prepend">Secteur</div>
-            <div className="progress-group-bars mr-2">
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Secteur
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
+            </div>
+            <div className="progress-group-bars">
               <Progress className="progress-xs" color="info" value="80" />
               <Progress className="progress-xs" color="danger" value="67" />
             </div>
-            <div className="progress-group-prepend text-center font-weight-bold">20,120 <span className="text-muted small">(15020|5100)</span></div>
           </div>
-          <div className="progress-group mb-4">
-            <div className="progress-group-prepend">Secteur</div>
-            <div className="progress-group-bars mr-2">
-              <Progress className="progress-xs" color="info" value="40" />
-              <Progress className="progress-xs" color="danger" value="30" />
+
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Secteur
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
             </div>
-            <div className="progress-group-prepend text-center font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="info" value="80" />
+              <Progress className="progress-xs" color="danger" value="67" />
+            </div>
+          </div>
+
+
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Secteur
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="info" value="80" />
+              <Progress className="progress-xs" color="danger" value="67" />
+            </div>
+          </div>
+
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Secteur
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="info" value="80" />
+              <Progress className="progress-xs" color="danger" value="67" />
+            </div>
           </div>
         </ul>
     )
@@ -371,29 +496,24 @@ class Dashboard extends Component {
   AdherentParRegion(){
     return(
         <ul>
-          <div className="progress-group mb-4">
-            <div className="progress-group-prepend">Région</div>
-            <div className="progress-group-bars mr-2">
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Region
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
+            </div>
+            <div className="progress-group-bars">
               <Progress className="progress-xs" color="info" value="80" />
               <Progress className="progress-xs" color="danger" value="67" />
             </div>
-            <div className="progress-group-prepend text-center font-weight-bold">20,120 <span className="text-muted small">(15020|5100)</span></div>
           </div>
-          <div className="progress-group mb-4">
-            <div className="progress-group-prepend">Région</div>
-            <div className="progress-group-bars mr-2">
-              <Progress className="progress-xs" color="info" value="40" />
-              <Progress className="progress-xs" color="danger" value="30" />
+
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">Region
+              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
             </div>
-            <div className="progress-group-prepend text-center font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></div>
-          </div>
-          <div className="progress-group mb-4">
-            <div className="progress-group-prepend">Région</div>
-            <div className="progress-group-bars mr-2">
-              <Progress className="progress-xs" color="info" value="12" />
-              <Progress className="progress-xs" color="danger" value="20" />
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="info" value="80" />
+              <Progress className="progress-xs" color="danger" value="67" />
             </div>
-            <div className="progress-group-prepend text-center font-weight-bold">10,120 <span className="text-muted small">(15020|5100)</span></div>
           </div>
         </ul>
     )
@@ -402,16 +522,114 @@ class Dashboard extends Component {
     return(
         <div>
           <Row>
-            <Col xs="3"/>
-            <Col className="mt-4 text-center" xs="3">
-              <Card className="ml-3 my-1 bg-primary"><h4>Hommes: 69%</h4></Card>
-              <Card className="ml-3 bg-danger"><h4>Femmes: 31%</h4></Card>
-            </Col>
-            <Col xs="5">
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-primary"><h6>Hommes: 69%</h6></Card></Col>
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-danger"><h6>Femmes: 31%</h6></Card></Col>
+
               <Doughnut data={doughnut} options={doughnutOpts} height={100}/>
-            </Col>
           </Row>
         </div>
+    )
+  }
+
+  Vente(){
+    return(
+      <ul>
+        <div className="progress-group ml-n5">
+          <div className="progress-group-header">
+            <span className="title">Coop1</span>
+            <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+          </div>
+          <div className="progress-group-bars">
+            <Progress className="progress-xs" color="success" value="56" />
+          </div>
+        </div>
+        <div className="progress-group ml-n5">
+          <div className="progress-group-header">
+            <span className="title">Copp1</span>
+            <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+          </div>
+          <div className="progress-group-bars">
+            <Progress className="progress-xs" color="success" value="15" />
+          </div>
+        </div>
+      </ul>
+      )
+  }
+  Communication(){
+    return(
+        <ul>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Coop1</span>
+              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="56" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Copp1</span>
+              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="15" />
+            </div>
+          </div>
+        </ul>
+    )
+  }
+  Canal(){
+    return(
+        <Doughnut data={doughnut} options={doughnutOpts} height={120}/>
+    )
+  }
+  Formation(){
+    return(
+        <ul>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Coop1</span>
+              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="56" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Copp1</span>
+              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="15" />
+            </div>
+          </div>
+        </ul>
+    )
+  }
+  Evenement(){
+    return(
+        <ul>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Coop1</span>
+              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="56" />
+            </div>
+          </div>
+          <div className="progress-group ml-n5">
+            <div className="progress-group-header">
+              <span className="title">Copp1</span>
+              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+            </div>
+            <div className="progress-group-bars">
+              <Progress className="progress-xs" color="success" value="15" />
+            </div>
+          </div>
+        </ul>
     )
   }
 
@@ -473,20 +691,18 @@ class Dashboard extends Component {
     )
   }
 
-  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
-
   render() {
     return (
       <div className="mx-4">
         <Row>
-          <Col xs="6">
+          <Col xs="4">
             <Card>
               <CardHeader onClick={() => this.toggleAccordion12()} className="text-white bg-warning hoverPointer border-warning">
                 <Row>
-                  <Col><h1 className="display-4">Coopérative</h1></Col>
-                  <Col><h1 className="mx-2 text-right display-4"><i className=" icon-people"/></h1></Col>
+                  <Col><h2 >Coopérative</h2></Col>
+                  <Col><h1 className="mx-2 text-right"><i className=" icon-people"/></h1></Col>
                 </Row>
-                <h1 className="display-3 mb-n5" ><strong>12.5k</strong></h1>
+                <h1 className="mt-n3 mb-3" ><strong>12.5k</strong></h1>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '100px' }}>
                   <Line data={cardChartData3} options={cardChartOpts3} />
                 </div>
@@ -519,15 +735,15 @@ class Dashboard extends Component {
             </Card>
           </Col>
 
-          <Col xs="6">
+          <Col xs="4">
             <Card>
               <CardHeader onClick={() => this.toggleAccordion12()} className="text-white bg-danger hoverPointer border-danger">
                 <Row>
-                  <Col><h1 className="display-4">Profit</h1></Col>
-                  <Col><h1 className="mx-2 text-right display-4"><i className="icon-graph"/></h1></Col>
+                  <Col><h2>Profit</h2></Col>
+                  <Col><h1 className="mx-2 text-right"><i className="icon-graph"/></h1></Col>
                 </Row>
-                <h1 className="display-3 mb-n5" ><strong>53.1K</strong></h1>
-                <div className="mt-n5 mb-n2 mx-n3" style={{ height: '100px' }}>
+                <h1 className="mt-n3 mb-3" ><strong>53.5k</strong></h1>
+                <div className="mt-n5 mb-n3 mx-n3" style={{ height: '108px' }}>
                   <Line data={cardChartData3} options={cardChartOpts1} />
                 </div>
               </CardHeader>
@@ -558,17 +774,15 @@ class Dashboard extends Component {
               </Collapse>
             </Card>
           </Col>
-        </Row>
-
-        <Row>
-          <Col>
+          
+          <Col  xs="4">
             <Card>
               <CardHeader onClick={() => this.toggleAccordion3()} className="text-white bg-primary hoverPointer border-primary">
                 <Row>
-                  <Col><h1 className="display-4">Adhérent</h1></Col>
-                  <Col><h1 className="mx-2 text-right display-4"><i className="icon-user"/></h1></Col>
+                  <Col><h2>Adhérent</h2></Col>
+                  <Col><h1 className="mx-2 text-right"><i className="icon-user"/></h1></Col>
                 </Row>
-                <h1 className="display-3 mb-n5" ><strong>53.1K</strong></h1>
+                <h1 className="mt-n3 mb-3"><strong>53.1K</strong></h1>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '100px' }}>
                   <Bar data={cardChartData3} options={cardChartOpts4} />
                 </div>
@@ -611,6 +825,135 @@ class Dashboard extends Component {
               </Collapse>
             </Card>
           </Col>
+        </Row>
+
+        <Row>
+          <Col xs="3">
+            <Card>
+              <CardHeader onClick={() => this.toggleAccordion4()} className="text-white bg-gray-700 hoverPointer border-dark">
+                <Row>
+                  <Col><h4 className="ml-n2">Communication</h4></Col>
+                  <Col><h3 className="mr-n3 text-right"><i className=" icon-people"/></h3></Col>
+                </Row>
+                <h3 className="mb-3" ><strong>12.5k</strong></h3>
+                <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
+                  <Line data={cardChartData3} options={cardChartOpts3} />
+                </div>
+              </CardHeader>
+              <Collapse isOpen={this.state.acc4}>
+                <ButtonGroup className="m-0 app-body">
+                  <Button onClick={() => this.toggleSubAccordion4(0)}
+                          className="btn-square" color={this.state.colors4[0]}>Par coopératives</Button>
+                  <Button onClick={() => this.toggleSubAccordion4(1)}
+                          className="btn-square" color={this.state.colors4[1]}>Par Canals </Button>
+                </ButtonGroup>
+                <Row>
+                  <Col Style={this.state.displayStyle4[0]}>
+                    <Collapse isOpen={this.state.accordion4[0]}>
+                      <CardBody>
+                        {this.state.communication}
+                      </CardBody>
+                    </Collapse>
+                  </Col>
+                  <Col Style={this.state.displayStyle4[1]}>
+                    <Collapse isOpen={this.state.accordion4[1]}>
+                      <CardBody>
+                        {this.state.canal}
+                      </CardBody>
+                    </Collapse>
+                  </Col>
+                </Row>
+              </Collapse>
+            </Card>
+          </Col>
+
+          <Col xs="3">
+            <Card>
+              <CardHeader onClick={() => this.toggleAccordion567()} className="text-white bg-gray-700 hoverPointer border-dark">
+                <Row>
+                  <Col><h4 >Ventes</h4></Col>
+                  <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
+                </Row>
+                <h3 className="mb-3" ><strong>12.5k</strong></h3>
+                <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
+                  <Line data={cardChartData3} options={cardChartOpts3} />
+                </div>
+              </CardHeader>
+              <Collapse isOpen={this.state.acc567}>
+                <ButtonGroup className="m-0 app-body">
+                  <Button className="btn-square" color="dark">Par coopératives</Button>
+                </ButtonGroup>
+                <Row>
+                  <Col>
+                    <Collapse isOpen={true}>
+                      <CardBody>
+                        {this.state.vente}
+                      </CardBody>
+                    </Collapse>
+                  </Col>
+                </Row>
+              </Collapse>
+            </Card>
+          </Col>
+
+
+          <Col xs="3">
+          <Card>
+            <CardHeader onClick={() => this.toggleAccordion567()} className="text-white bg-gray-700 hoverPointer border-dark">
+              <Row>
+                <Col><h4 >Formations</h4></Col>
+                <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
+              </Row>
+              <h3 className="mb-3" ><strong>12.5k</strong></h3>
+              <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
+                <Line data={cardChartData3} options={cardChartOpts3} />
+              </div>
+            </CardHeader>
+            <Collapse isOpen={this.state.acc567}>
+              <ButtonGroup className="m-0 app-body">
+                <Button className="btn-square" color="dark">Par coopératives</Button>
+              </ButtonGroup>
+              <Row>
+                <Col>
+                  <Collapse isOpen={true}>
+                    <CardBody>
+                      {this.state.formation}
+                    </CardBody>
+                  </Collapse>
+                </Col>
+              </Row>
+            </Collapse>
+          </Card>
+        </Col>
+
+          <Col xs="3">
+          <Card>
+            <CardHeader onClick={() => this.toggleAccordion567()} className="text-white bg-gray-700 hoverPointer border-dark">
+              <Row>
+                <Col><h4 >Evénements</h4></Col>
+                <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
+              </Row>
+              <h3 className="mb-3" ><strong>12.5k</strong></h3>
+              <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
+                <Line data={cardChartData3} options={cardChartOpts3} />
+              </div>
+            </CardHeader>
+            <Collapse isOpen={this.state.acc567}>
+              <ButtonGroup className="m-0 app-body">
+                <Button className="btn-square" color="dark">Par coopératives</Button>
+              </ButtonGroup>
+              <Row>
+                <Col>
+                  <Collapse isOpen={true}>
+                    <CardBody>
+                      {this.state.evenement}
+                    </CardBody>
+                  </Collapse>
+                </Col>
+                </Row>
+            </Collapse>
+          </Card>
+        </Col>
         </Row>
 
         <Row>
