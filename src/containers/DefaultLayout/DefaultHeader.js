@@ -17,6 +17,32 @@ class DefaultHeader extends Component {
 
     const { children, ...attributes } = this.props;
 
+    const signOut = ()=> {
+        localStorage.removeItem("user");
+    }
+    const signOutBtn =() =>{
+        let user=JSON.parse(localStorage.getItem("user"));
+        if(user===null){
+            return(<div/>)
+        }
+        else{
+            return(
+                <a role="button" className="btn btn-outline-danger" onClick={() => { signOut() }}>Déconnecter</a>
+            )
+        }
+    }
+    const accountBtn =() =>{
+          let user=JSON.parse(localStorage.getItem("user"));
+          if(user===null){
+              return(<div/>)
+          }
+          else{
+              return(
+                  <a role="button" className="btn btn-outline-primary">Mon Compte</a>
+              )
+          }
+      }
+
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
@@ -25,18 +51,19 @@ class DefaultHeader extends Component {
 
         <Nav className="ml-auto" navbar>
         <NavItem className="d-md-down-none px-3">
-            <NavLink to="#" className="nav-link">Acceuil</NavLink>
-        </NavItem><NavItem className="d-md-down-none px-3">
-        <NavLink to="#" className="nav-link">Presentation</NavLink>
+            <NavLink to="/Home" className="nav-link">Acceuil</NavLink>
         </NavItem>
           <NavItem className="d-md-down-none px-3">
-            <NavLink to="#" className="nav-link">Documents</NavLink>
+            <a target="_blank" rel="noopener noreferrer" href="http://www.odco.gov.ma/fr/content/espace-t%C3%A9l%C3%A9chargement" className="nav-link">Documents</a>
           </NavItem>
           <NavItem className="d-md-down-none px-3">
-            <NavLink to="#" className="nav-link">Conseils</NavLink>
+            <a target="_blank" rel="noopener noreferrer" href="http://www.odco.gov.ma/fr/content/conseils" className="nav-link">Conseils</a>
           </NavItem>
+            <NavItem className="d-md-down-none pl-3">
+                <NavLink to="/Account" className="nav-link">{accountBtn()}</NavLink>
+            </NavItem>
           <NavItem className="d-md-down-none px-3">
-            <NavLink to="#" className="nav-link"><i className="icon-user"></i></NavLink>
+              <NavLink to="/Home" className="nav-link">{signOutBtn()}</NavLink>
           </NavItem>
         </Nav>
 

@@ -17,19 +17,19 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
 
-  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
+  constructor(props) {
+    super(props);
 
-  signOut(e) {
-    e.preventDefault()
-    this.props.history.push('/login')
   }
+
+  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   render() {
     return (
       <div className="app">
         <AppHeader fixed>
           <Suspense  fallback={this.loading()}>
-            <DefaultHeader onLogout={e=>this.signOut(e)}/>
+            <DefaultHeader/>
           </Suspense>
         </AppHeader>
 
@@ -49,7 +49,7 @@ class DefaultLayout extends Component {
                                 exact={route.exact}
                                 name={route.name}
                                 render={props => (
-                                    <route.component {...props} />
+                                    <route.component {...props} handleLogin={this.props.handleLogin} user={this.props.user}/>
                                 )} />
                         ) : (null);
                       })}

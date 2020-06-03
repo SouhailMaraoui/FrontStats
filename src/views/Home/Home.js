@@ -1,4 +1,4 @@
-import React, { Component, lazy, Suspense } from 'react';
+import React, { Component} from 'react';
 import {
   Card,
   CardBody,
@@ -8,8 +8,6 @@ import {
 import thumbnail from "../../assets/img/Home/Thumbnail.png";
 
 class Home extends Component {
-
-  loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   render() {
     return (

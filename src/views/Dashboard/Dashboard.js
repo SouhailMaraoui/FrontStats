@@ -195,6 +195,16 @@ class Dashboard extends Component {
     };
   }
 
+  componentDidMount() {
+    let user=JSON.parse(localStorage.getItem("user"));
+    if(user===null){
+      this.props.history.push("/login");
+    }
+    else if(user.role==="user"){
+      this.props.history.push("/account");
+    }
+  }
+
   toggleAccordion12() {
     this.setState({
       acc12:!this.state.acc12,
