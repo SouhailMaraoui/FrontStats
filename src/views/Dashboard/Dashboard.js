@@ -379,7 +379,7 @@ class Dashboard extends Component {
                 <div className="progress-group-header">
                   <span className="title">{element.nomSecteur}</span>
                   <span className="ml-auto font-weight-bold">{this.NumberCoopParSecteur(index)}<span className="text-muted small">
-                    ({100*this.NumberCoopParSecteur(index)/this.state.Cooperatives.length}%)</span></span>
+                    ({Math.floor(100*this.NumberCoopParSecteur(index)/this.state.Cooperatives.length)}%)</span></span>
                 </div>
                 <div className="progress-group-bars">
                   <Progress className="progress-xs" color="warning" value={100*this.NumberCoopParSecteur(index)/this.state.Cooperatives.length} />
@@ -410,7 +410,7 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomRegion}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberCoopParRegion(index)}<span className="text-muted small">
-                    ({100*this.NumberCoopParRegion(index)/this.state.Cooperatives.length}%)</span></span>
+                    ({Math.floor(100*this.NumberCoopParRegion(index)/this.state.Cooperatives.length)}%)</span></span>
                     </div>
                     <div className="progress-group-bars">
                       <Progress className="progress-xs" color="warning" value={100*this.NumberCoopParRegion(index)/this.state.Cooperatives.length} />
@@ -454,7 +454,7 @@ class Dashboard extends Component {
               <div className="progress-group-header">
                 <span className="title">{element.nomSecteur}</span>
                 <span className="ml-auto font-weight-bold">{this.NumberProfit(0,index)}<span className="text-muted small">
-              ({100*this.NumberProfit(0,index)/this.SumProfit()}%)</span></span>
+              ({Math.floor(100*this.NumberProfit(0,index)/this.SumProfit())}%)</span></span>
               </div>
               <div className="progress-group-bars">
                 <Progress className="progress-xs" color="danger" value={100*this.NumberProfit(0,index)/this.SumProfit()} />
@@ -474,7 +474,7 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomRegion}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberProfit(1,index)}<span className="text-muted small">
-              ({100*this.NumberProfit(1,index)/this.SumProfit()}%)</span></span>
+              ({Math.floor(100*this.NumberProfit(1,index)/this.SumProfit())}%)</span></span>
                     </div>
                     <div className="progress-group-bars">
                       <Progress className="progress-xs" color="danger" value={100*this.NumberProfit(1,index)/this.SumProfit()} />
@@ -497,9 +497,12 @@ class Dashboard extends Component {
 
       if(idType===id){
         this.state.Membres.forEach(member=>{
-          if(member.idCooperative===element.id)
-            if(member.sexe==="Homme"){ret[0]++}
-          sum++;
+          if(member.idCooperative===element.id) {
+            if (member.sexe === "Homme") {
+              ret[0]++
+            }
+            sum++;
+          }
         })
       }
     })
@@ -531,11 +534,12 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomSecteur}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberAdherenet(0,index)}<span className="text-muted small">
-              ({this.NumberAdherenetParSexe(0,index)[0]}|{this.NumberAdherenetParSexe(0,index)[1]})</span></span>
+                      ({Math.floor(100*this.NumberAdherenet(0,index)/this.state.Membres.length)}%)
+                      [{this.NumberAdherenetParSexe(0,index)[0]}|{this.NumberAdherenetParSexe(0,index)[1]}]</span></span>
                     </div>
                     <div className="progress-group-bars">
                       <Progress className="progress-xs" color="info" value={100*this.NumberAdherenetParSexe(0,index)[0]/this.state.Membres.length} />
-                      <Progress className="progress-xs" color="white" value={100*this.NumberAdherenetParSexe(0,index)[1]/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="danger" value={100*this.NumberAdherenetParSexe(0,index)[1]/this.state.Membres.length} />
                     </div>
                   </div>)}
           )}
@@ -551,11 +555,13 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomRegion}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberAdherenet(1,index)}<span className="text-muted small">
-              ({this.NumberAdherenetParSexe(1,index)[0]}|{this.NumberAdherenetParSexe(1,index)[1]})</span></span>
+                      ({Math.floor(100*this.NumberAdherenet(1,index)/this.state.Membres.length)}%)
+                      [{this.NumberAdherenetParSexe(1,index)[0]}|{this.NumberAdherenetParSexe(1,index)[1]}]
+                      </span></span>
                     </div>
                     <div className="progress-group-bars">
                       <Progress className="progress-xs" color="info" value={100*this.NumberAdherenetParSexe(1,index)[0]/this.state.Membres.length} />
-                      <Progress className="progress-xs" color="white" value={100*this.NumberAdherenetParSexe(1,index)[1]/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="danger" value={100*this.NumberAdherenetParSexe(1,index)[1]/this.state.Membres.length} />
                     </div>
                   </div>)}
           )}
@@ -630,7 +636,7 @@ class Dashboard extends Component {
               <div className="progress-group-header">
                 <span className="title">{element.nomCooperative}</span>
                 <span className="ml-auto font-weight-bold">{this.CoopVente(index)}<span className="text-muted small">
-              ({100*this.CoopVente(index)/this.SumVente()}%)</span></span>
+              ({Math.floor(100*this.CoopVente(index)/this.SumVente())}%)</span></span>
               </div>
               <div className="progress-group-bars">
                 <Progress className="progress-xs" color="dark" value={100*this.CoopVente(index)/this.SumVente()} />
@@ -661,7 +667,7 @@ class Dashboard extends Component {
               <div className="progress-group-header">
                 <span className="title">{element.nomCooperative}</span>
                 <span className="ml-auto font-weight-bold">{this.CoopComm(index)}<span className="text-muted small">
-                  ({100*this.CoopComm(index)/this.state.Communications.length}%)</span></span>
+                  ({Math.floor(100*this.CoopComm(index)/this.state.Communications.length)}%)</span></span>
               </div>
               <div className="progress-group-bars">
                 <Progress className="progress-xs" color="dark" value={100*this.CoopComm(index)/this.state.Communications.length} />
@@ -732,7 +738,7 @@ class Dashboard extends Component {
               <div className="progress-group-header">
                 <span className="title">{element.nomCooperative}</span>
                 <span className="ml-auto font-weight-bold">{this.CoopFormation(index)}<span className="text-muted small">
-          ({100*this.CoopFormation(index)/this.state.Formations.length}%)</span></span>
+          ({Math.floor(100*this.CoopFormation(index)/this.state.Formations.length)}%)</span></span>
             </div>
             <div className="progress-group-bars">
               <Progress className="progress-xs" color="dark" value={100*this.CoopFormation(index)/this.state.Formations.length} />
@@ -763,7 +769,7 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomCooperative}</span>
                       <span className="ml-auto font-weight-bold">{this.CoopEvenement(index)}<span className="text-muted small">
-          ({100*this.CoopEvenement(index)/this.state.Evenements.length}%)</span></span>
+          ({Math.floor(100*this.CoopEvenement(index)/this.state.Evenements.length)}%)</span></span>
                     </div>
                     <div className="progress-group-bars">
                       <Progress className="progress-xs" color="dark" value={100*this.CoopEvenement(index)/this.state.Evenements.length} />
@@ -773,8 +779,6 @@ class Dashboard extends Component {
         </ul>
     )
   }
-
-  Str
 
   showCoops(){
     return(
