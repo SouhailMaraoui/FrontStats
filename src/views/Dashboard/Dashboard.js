@@ -1093,7 +1093,7 @@ class Dashboard extends Component {
           <Col>
             <Card>
               <CardHeader className="bg-dark">
-                <h1 className="display-4">Liste des Coopératives au Maroc</h1>
+                <h1 className="display-4">Liste des Coopératives</h1>
               </CardHeader>
               {this.CoopsTable()}
           </Card>
