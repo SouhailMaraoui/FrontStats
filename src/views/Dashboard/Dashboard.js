@@ -180,9 +180,6 @@ class Dashboard extends Component {
     };
   }
 
-  componentWillMount() {
-  }
-
   componentDidMount() {
     let user=JSON.parse(localStorage.getItem("user"));
     if(user===null){
