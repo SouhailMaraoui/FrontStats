@@ -56,7 +56,8 @@ class Register extends Component {
       newCooperative:{
         nomCooperative: '',
         idSecteur:'',
-        idAdresse:''
+        idAdresse:'',
+        idRegion:''
       },
 
       newMembres:[],
@@ -111,8 +112,10 @@ class Register extends Component {
     });
   };
   handleRegionChange = (event) => {
+    let newCooperative=this.state.newCooperative;
     this.setState({selectedRegion: event.target.value });
     const regionId=parseInt(event.target.value)+1;
+    newCooperative.idRegion=regionId;
     axios.get(this.state.API_LINK+'region/'+regionId+'/villes')
       .then((response) =>{
         this.setState({
@@ -304,7 +307,7 @@ class Register extends Component {
 
     newAdress.idVille=this.state.Villes[this.state.selectedVille].id;
     newCooperative.idSecteur=this.state.Secteurs[this.state.selectedSecteur].id;
-
+    newCooperative.idRegion=this.state.Regions[this.state.selectedRegion].id;
     axios.post(link+'adresse/create/',newAdress).then((response)=>{
       const idAdresse=response.data;
       newCooperative.idAdresse=idAdresse;

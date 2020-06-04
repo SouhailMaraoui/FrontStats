@@ -13,6 +13,7 @@ import {
   ButtonGroup,
   Collapse, Button,
 } from 'reactstrap';
+import axios from "axios";
 
 const cardChartData3 = {
   labels: ['1','2','3', '4', '5', '6', '7', '8', '9'],
@@ -119,24 +120,6 @@ const cardChartOpts4 = {
       }],
   },
 };
-const doughnut = {
-  labels: [
-    'Hommes',
-    'Femmes',
-  ],
-  datasets: [
-    {
-      data: [100, 63],
-      backgroundColor: [
-        '#F86C6B',
-        '#20A8D8',
-      ],
-      hoverBackgroundColor: [
-        '#F86C6B',
-        '#20A8D8',
-      ],
-    }],
-};
 const doughnutOpts = {
   legend: {
     display: false,
@@ -157,6 +140,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      API_LINK:'https://costats.ew.r.appspot.com/',
+
       acc12:true,
       accordion12: [true, false],
       displayStyle12:["display:block;","display:none;"],
@@ -175,24 +160,27 @@ class Dashboard extends Component {
 
       acc567:true,
 
-      coopParSecteur:this.CoopParSecteur(),
-      coopParRegion:this.CoopParRegion(),
+      Cooperatives:[],
+      Pertes:[],
+      Revenus:[],
+      Membres:[],
 
-      profitParSecteur:this.ProfitParSecteur(),
-      profitParRegion:this.ProfitParRegion(),
+      Communications:[],
+      Ventes:[],
+      Formations:[],
+      Evenements:[],
 
-      adherentParSecteur:this.AdherentParSecteur(),
-      adherentParRegion:this.AdherentParRegion(),
-      adherentParSexe:this.AdherentParSexe(),
+      Secteurs:[],
+      Regions:[],
+      CanalComm:[],
 
-      vente:this.Vente(),
-      communication:this.Communication(),
-      canal:this.Canal(),
-      formation:this.Formation(),
-      evenement:this.Evenement(),
-
-      coopsTable:this.CoopsTable(),
+      searchCoop:'',
+      searchSecteur:'',
+      searchRegion:'',
     };
+  }
+
+  componentWillMount() {
   }
 
   componentDidMount() {
@@ -202,6 +190,71 @@ class Dashboard extends Component {
     }
     else if(user.role==="user"){
       this.props.history.push("/account");
+    }
+    else{
+      axios.get(this.state.API_LINK+'secteur/all')
+          .then((response) =>{
+            axios.get(this.state.API_LINK+'region/all')
+                .then((response) =>{
+                  axios.get(this.state.API_LINK+'cooperative/all')
+                      .then((response) =>{
+                        this.setState({
+                          Cooperatives: response.data,
+                        })
+                      });
+                  this.setState({
+                    Regions: response.data,
+                  })
+                });
+            this.setState({
+              Secteurs: response.data,
+            })
+          });
+      axios.get(this.state.API_LINK+'perte/all')
+          .then((response) =>{
+            axios.get(this.state.API_LINK+'revenu/all')
+                .then((response) =>{
+                  axios.get(this.state.API_LINK+'membre/all')
+                      .then((response) =>{
+                        this.setState({
+                          Membres: response.data,
+                        })
+                      });
+                  this.setState({
+                    Revenus: response.data,
+                  })
+                });
+            this.setState({
+              Pertes: response.data,
+            })
+          });
+
+
+      axios.get(this.state.API_LINK+'communication/all')
+          .then((response) =>{
+            axios.get(this.state.API_LINK+'produit/all')
+              .then((response) =>{
+                axios.get(this.state.API_LINK+'formation/all')
+                    .then((response) =>{
+                      axios.get(this.state.API_LINK+'evenement/all')
+                          .then((response) =>{
+                            this.setState({
+                              Evenements: response.data,
+                            })
+                          });
+                      this.setState({
+                        Formations: response.data,
+                      })
+                    });
+                this.setState({
+                  Ventes: response.data,
+                })
+              });
+            this.setState({
+              Communications: response.data,
+            })
+          });
+
     }
   }
 
@@ -238,7 +291,6 @@ class Dashboard extends Component {
       });
     }
   }
-
   toggleAccordion3() {
     this.setState({
       acc12:!this.state.acc12,
@@ -273,7 +325,6 @@ class Dashboard extends Component {
       });
     }
   }
-
   toggleAccordion4() {
     this.setState({
       acc4:!this.state.acc4,
@@ -304,7 +355,6 @@ class Dashboard extends Component {
       });
     }
   }
-
   toggleAccordion567() {
     this.setState({
       acc567:!this.state.acc567,
@@ -312,337 +362,423 @@ class Dashboard extends Component {
     })
   }
 
+  NumberCoopParSecteur(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Cooperatives.forEach(element=>{
+      if(element.idSecteur===id)
+      {
+        ret++;
+      }
+    })
+    return ret;
+  }
   CoopParSecteur(){
     return(
         <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="56" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="15" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="56" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="15" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
+          {this.state.Secteurs.map((element, index)=>
+          {return(
+              <div className="progress-group ml-n5">
+                <div className="progress-group-header">
+                  <span className="title">{element.nomSecteur}</span>
+                  <span className="ml-auto font-weight-bold">{this.NumberCoopParSecteur(index)}<span className="text-muted small">
+                    ({100*this.NumberCoopParSecteur(index)/this.state.Cooperatives.length}%)</span></span>
+                </div>
+                <div className="progress-group-bars">
+                  <Progress className="progress-xs" color="warning" value={100*this.NumberCoopParSecteur(index)/this.state.Cooperatives.length} />
+                  <Progress className="progress-xs" color="white" value="100" />
+                </div>
+              </div>)}
+          )}
         </ul>
     )
+  }
+  NumberCoopParRegion(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Cooperatives.forEach(element=>{
+      if(element.idRegion===id)
+      {
+        ret++;
+      }
+    })
+    return ret;
   }
   CoopParRegion(){
     return(
         <ul>
-          <div className="progress-group">
-            <div className="progress-group-header">
-              <span className="title">Région</span>
-              <span className="ml-auto font-weight-bold">20,120 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="80" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group">
-            <div className="progress-group-header">
-              <span className="title">Région</span>
-              <span className="ml-auto font-weight-bold">5,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="warning" value="5" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
+          {this.state.Regions.map((element, index)=>
+              {return(
+                  <div className="progress-group ml-n5">
+                    <div className="progress-group-header">
+                      <span className="title">{element.nomRegion}</span>
+                      <span className="ml-auto font-weight-bold">{this.NumberCoopParRegion(index)}<span className="text-muted small">
+                    ({100*this.NumberCoopParRegion(index)/this.state.Cooperatives.length}%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="warning" value={100*this.NumberCoopParRegion(index)/this.state.Cooperatives.length} />
+                      <Progress className="progress-xs" color="white" value="100" />
+                    </div>
+                  </div>)}
+          )}
         </ul>
     )
   }
 
+  NumberProfit(type,index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Cooperatives.forEach(element=>{
+      let idType;
+      if(type===0) idType=element.idSecteur;
+      else idType=element.idRegion;
+      if(idType===id){
+        this.state.Revenus.forEach(revenu=>{
+          if(revenu.idCooperative===element.id)
+            ret+=revenu.sommeGagnee;
+        })
+      }
+    })
+    return ret;
+  }
+  SumProfit(){
+    let ret=0;
+    this.state.Revenus.forEach(element=>{
+      ret+=element.sommeGagnee;
+    })
+    return ret;
+  }
   ProfitParSecteur(){
     return(
-        <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="danger" value="56" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="danger" value="15" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars ">
-              <Progress className="progress-xs" color="danger" value="56" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Secteur</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="danger" value="15" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-        </ul>
+      <ul>
+        {this.state.Secteurs.map((element, index)=>
+          {return(
+            <div className="progress-group ml-n5">
+              <div className="progress-group-header">
+                <span className="title">{element.nomSecteur}</span>
+                <span className="ml-auto font-weight-bold">{this.NumberProfit(0,index)}<span className="text-muted small">
+              ({100*this.NumberProfit(0,index)/this.SumProfit()}%)</span></span>
+              </div>
+              <div className="progress-group-bars">
+                <Progress className="progress-xs" color="danger" value={100*this.NumberProfit(0,index)/this.SumProfit()} />
+                <Progress className="progress-xs" color="white" value="100" />
+              </div>
+            </div>)}
+        )}
+      </ul>
     )
   }
   ProfitParRegion(){
     return(
         <ul>
-          <div className="progress-group">
-            <div className="progress-group-header">
-              <span className="title">Région</span>
-              <span className="ml-auto font-weight-bold">20,120 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="danger" value="80" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
-          <div className="progress-group">
-            <div className="progress-group-header">
-              <span className="title">Région</span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="danger" value="5" />
-              <Progress className="progress-xs" color="white" value="100" />
-            </div>
-          </div>
+          {this.state.Regions.map((element, index)=>
+              {return(
+                  <div className="progress-group ml-n5">
+                    <div className="progress-group-header">
+                      <span className="title">{element.nomRegion}</span>
+                      <span className="ml-auto font-weight-bold">{this.NumberProfit(1,index)}<span className="text-muted small">
+              ({100*this.NumberProfit(1,index)/this.SumProfit()}%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="danger" value={100*this.NumberProfit(1,index)/this.SumProfit()} />
+                      <Progress className="progress-xs" color="white" value="100" />
+                    </div>
+                  </div>)}
+          )}
         </ul>
     )
   }
 
+  NumberAdherenet(type,index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Cooperatives.forEach(element=>{
+      let idType;
+      if(type===0) idType=element.idSecteur;
+      else idType=element.idRegion;
+      if(idType===id){
+        this.state.Membres.forEach(member=>{
+          if(member.idCooperative===element.id)
+            ret++;
+        })
+      }
+    })
+    return ret;
+  }
   AdherentParSecteur(){
     return(
         <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Secteur
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
-
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Secteur
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
-
-
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Secteur
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
-
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Secteur
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
+          {this.state.Secteurs.map((element, index)=>
+              {return(
+                  <div className="progress-group ml-n5">
+                    <div className="progress-group-header">
+                      <span className="title">{element.nomSecteur}</span>
+                      <span className="ml-auto font-weight-bold">{this.NumberAdherenet(0,index)}<span className="text-muted small">
+              ({100*this.NumberAdherenet(0,index)/this.state.Membres.length}%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenet(0,index)/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="white" value="100" />
+                    </div>
+                  </div>)}
+          )}
         </ul>
     )
   }
   AdherentParRegion(){
     return(
         <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Region
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
-
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">Region
-              <span className="ml-auto font-weight-bold">18,120 <span className="text-muted small">(13020|5100)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="info" value="80" />
-              <Progress className="progress-xs" color="danger" value="67" />
-            </div>
-          </div>
+          {this.state.Regions.map((element, index)=>
+              {return(
+                  <div className="progress-group ml-n5">
+                    <div className="progress-group-header">
+                      <span className="title">{element.nomRegion}</span>
+                      <span className="ml-auto font-weight-bold">{this.NumberAdherenet(1,index)}<span className="text-muted small">
+              ({100*this.NumberAdherenet(1,index)/this.state.Membres.length}%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenet(1,index)/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="white" value="100" />
+                    </div>
+                  </div>)}
+          )}
         </ul>
     )
   }
+  NumberAdherentSexe(){
+    let ret=[0,0];
+    this.state.Membres.forEach(element=>{
+      if(element.sexe==="Homme"){ret[0]++}
+    })
+    ret[1]=this.state.Membres.length-ret[0];
+    return ret;
+  }
+  doughnutSexe(){
+    return({
+      labels: [
+        'Hommes',
+        'Femmes',
+      ],
+      datasets: [
+        {
+          data: [this.NumberAdherentSexe()[0], this.NumberAdherentSexe()[1]],
+          backgroundColor: [
+            '#F86C6B',
+            '#20A8D8',
+          ],
+          hoverBackgroundColor: [
+            '#F86C6B',
+            '#20A8D8',
+          ],
+        }],
+    })
+  };
   AdherentParSexe(){
     return(
         <div>
           <Row>
-            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-primary"><h6>Hommes: 69%</h6></Card></Col>
-            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-danger"><h6>Femmes: 31%</h6></Card></Col>
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-primary"><h6>Hommes: {100*this.NumberAdherentSexe()[0]/this.state.Membres.length}%</h6></Card></Col>
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-danger"><h6>Femmes: {100*this.NumberAdherentSexe()[1]/this.state.Membres.length}%</h6></Card></Col>
 
-              <Doughnut data={doughnut} options={doughnutOpts} height={100}/>
+              <Doughnut data={this.doughnutSexe()} options={doughnutOpts} height={100}/>
           </Row>
         </div>
     )
   }
 
+  CoopVente(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Ventes.forEach(element=>{
+      if(element.idCooperative===id)
+      {
+        ret+=element.qteProduit;
+      }
+    })
+    return ret;
+  }
+  SumVente(){
+    let ret=0;
+    this.state.Ventes.forEach(element=>{
+      ret+=element.qteProduit;
+    })
+    return ret;
+  }
   Vente(){
     return(
       <ul>
-        <div className="progress-group ml-n5">
-          <div className="progress-group-header">
-            <span className="title">Coop1</span>
-            <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-          </div>
-          <div className="progress-group-bars">
-            <Progress className="progress-xs" color="success" value="56" />
-          </div>
-        </div>
-        <div className="progress-group ml-n5">
-          <div className="progress-group-header">
-            <span className="title">Copp1</span>
-            <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-          </div>
-          <div className="progress-group-bars">
-            <Progress className="progress-xs" color="success" value="15" />
-          </div>
-        </div>
+        {this.state.Cooperatives.map((element, index)=>
+          {return(
+            <div className="progress-group ml-n5">
+              <div className="progress-group-header">
+                <span className="title">{element.nomCooperative}</span>
+                <span className="ml-auto font-weight-bold">{this.CoopVente(index)}<span className="text-muted small">
+              ({100*this.CoopVente(index)/this.SumVente()}%)</span></span>
+              </div>
+              <div className="progress-group-bars">
+                <Progress className="progress-xs" color="dark" value={100*this.CoopVente(index)/this.SumVente()} />
+              </div>
+            </div>)}
+        )}
       </ul>
-      )
+    )
+  }
+
+  CoopComm(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Communications.forEach(element=>{
+      if(element.idCooperative===id)
+      {
+        ret++;
+      }
+    })
+    return ret;
   }
   Communication(){
     return(
-        <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Coop1</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="56" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Copp1</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="15" />
-            </div>
-          </div>
-        </ul>
+      <ul>
+        {this.state.Cooperatives.map((element, index)=>
+          {return(
+            <div className="progress-group ml-n5">
+              <div className="progress-group-header">
+                <span className="title">{element.nomCooperative}</span>
+                <span className="ml-auto font-weight-bold">{this.CoopComm(index)}<span className="text-muted small">
+                  ({100*this.CoopComm(index)/this.state.Communications.length}%)</span></span>
+              </div>
+              <div className="progress-group-bars">
+                <Progress className="progress-xs" color="dark" value={100*this.CoopComm(index)/this.state.Communications.length} />
+              </div>
+            </div>)}
+        )}
+      </ul>
     )
   }
+
+  NumberCanal(){
+    let ret=[0,0,0,0];
+    this.state.Communications.forEach(comm=>{
+      ret[comm.idCanalComm-1]=comm.nombreUtilisationAnnuel;
+    })
+
+    return ret;
+  }
+  doughnutCanal(){
+    return({
+      labels: [
+        'Réseaux sociaux',
+        'Publicité TV',
+        'Panneau publicitaire',
+        'Autre...',
+      ],
+      datasets: [
+        {
+          data: this.NumberCanal(),
+          backgroundColor: [
+            '#F86C6B',
+            '#F0A8D8',
+            '#20F828',
+            '#20A8D8',
+          ],
+          hoverBackgroundColor: [
+            '#F86C6B',
+            '#F0A8D8',
+            '#20F828',
+            '#20A8D8',
+          ],
+        }],
+    })
+  };
   Canal(){
     return(
-        <Doughnut data={doughnut} options={doughnutOpts} height={120}/>
+        <Doughnut data={this.doughnutCanal()} options={doughnutOpts} height={120}/>
     )
+  }
+
+  CoopFormation(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Formations.forEach(element=>{
+      if(element.idCooperative===id)
+      {
+        ret++;
+      }
+    })
+    return ret;
   }
   Formation(){
     return(
-        <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Coop1</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+      <ul>
+        {this.state.Cooperatives.map((element, index)=>
+          {return(
+            <div className="progress-group ml-n5">
+              <div className="progress-group-header">
+                <span className="title">{element.nomCooperative}</span>
+                <span className="ml-auto font-weight-bold">{this.CoopFormation(index)}<span className="text-muted small">
+          ({100*this.CoopFormation(index)/this.state.Formations.length}%)</span></span>
             </div>
             <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="56" />
+              <Progress className="progress-xs" color="dark" value={100*this.CoopFormation(index)/this.state.Formations.length} />
             </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Copp1</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="15" />
-            </div>
-          </div>
-        </ul>
+          </div>)}
+        )}
+      </ul>
     )
+  }
+
+  CoopEvenement(index){
+    let ret=0;
+    let id=parseInt(index)+1;
+    this.state.Evenements.forEach(element=>{
+      if(element.idCooperative===id)
+      {
+        ret++;
+      }
+    })
+    return ret;
   }
   Evenement(){
     return(
         <ul>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Coop1</span>
-              <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="56" />
-            </div>
-          </div>
-          <div className="progress-group ml-n5">
-            <div className="progress-group-header">
-              <span className="title">Copp1</span>
-              <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-            </div>
-            <div className="progress-group-bars">
-              <Progress className="progress-xs" color="success" value="15" />
-            </div>
-          </div>
+          {this.state.Cooperatives.map((element, index)=>
+              {return(
+                  <div className="progress-group ml-n5">
+                    <div className="progress-group-header">
+                      <span className="title">{element.nomCooperative}</span>
+                      <span className="ml-auto font-weight-bold">{this.CoopEvenement(index)}<span className="text-muted small">
+          ({100*this.CoopEvenement(index)/this.state.Evenements.length}%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="dark" value={100*this.CoopEvenement(index)/this.state.Evenements.length} />
+                    </div>
+                  </div>)}
+          )}
         </ul>
     )
   }
 
+  Str
+
+  showCoops(){
+    return(
+        <tbody>
+        {/* eslint-disable-next-line array-callback-return */}
+        {this.state.Cooperatives.map((element, index)=>
+            {
+              const Coop=element.nomCooperative;
+              const Sect=(this.state.Secteurs[element.idSecteur-1]).nomSecteur;
+              const Reg=(this.state.Regions[element.idRegion-1]).nomRegion
+              if(Coop.includes(this.state.searchCoop) && Sect.includes(this.state.searchSecteur) && Reg.includes(this.state.searchRegion))
+              return(
+                <tr>
+                  <td>{Coop}</td>
+                  <td>{Sect}</td>
+                  <td>{Reg}</td>
+                </tr>)}
+        )}
+    </tbody>
+    )
+  }
   CoopsTable() {
     return(
       <div className="text-center">
@@ -650,52 +786,19 @@ class Dashboard extends Component {
           <thead>
           <tr>
             <th>Coopérative</th>
-            <th>Région</th>
             <th>Secteur</th>
+            <th>Région</th>
           </tr>
           <tr>
-            <th><Input type="text" className="text-center" placeholder="Chercher par Coopérative..." /></th>
-            <th><Input type="text" className="text-center" placeholder="Chercher par Région..." /></th>
-            <th><Input type="text" className="text-center" placeholder="Chercher par Secteur..." /></th>
+            <th><Input type="text" className="text-center" placeholder="Chercher par Coopérative..." onChange={(e) => {
+              this.setState({searchCoop : e.target.value})}}/></th>
+            <th><Input type="text" className="text-center" placeholder="Chercher par Secteur..." onChange={(e) => {
+              this.setState({searchSecteur : e.target.value})}}/></th>
+            <th><Input type="text" className="text-center" placeholder="Chercher par Région..." onChange={(e) => {
+              this.setState({searchRegion : e.target.value})}}/></th>
           </tr>
           </thead>
-          <tbody>
-          <tr>
-            <td>Yiorgos Avraamu</td>
-            <td>2012/01/01</td>
-            <td>Member</td>
-          </tr>
-          <tr>
-            <td>Avram Tarasios</td>
-            <td>2012/02/01</td>
-            <td>Staff</td>
-          </tr>
-          <tr>
-            <td>Quintin Ed</td>
-            <td>2012/02/01</td>
-            <td>Admin</td>
-          </tr>
-          <tr>
-            <td>Enéas Kwadwo</td>
-            <td>2012/03/01</td>
-            <td>Member</td>
-          </tr>
-          <tr>
-            <td>Agapetus Tadeáš</td>
-            <td>2012/01/21</td>
-            <td>Staff</td>
-          </tr>
-          <tr>
-            <td>Agapetus Tadeáš</td>
-            <td>2012/01/21</td>
-            <td>Staff</td>
-          </tr>
-          <tr>
-            <td>Agapetus Tadeáš</td>
-            <td>2012/01/21</td>
-            <td>Staff</td>
-          </tr>
-          </tbody>
+          {this.showCoops()}
         </Table>
       </div>
     )
@@ -728,7 +831,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle12[0]}>
                     <Collapse isOpen={this.state.accordion12[0]}>
                       <CardBody>
-                        {this.state.coopParSecteur}
+                        {this.CoopParSecteur()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -736,7 +839,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle12[1]}>
                     <Collapse isOpen={this.state.accordion12[1]}>
                       <CardBody>
-                        {this.state.coopParRegion}
+                        {this.CoopParRegion()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -768,7 +871,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle12[0]}>
                     <Collapse isOpen={this.state.accordion12[0]}>
                       <CardBody>
-                        {this.state.profitParSecteur}
+                        {this.ProfitParSecteur()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -776,7 +879,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle12[1]}>
                     <Collapse isOpen={this.state.accordion12[1]}>
                       <CardBody>
-                        {this.state.profitParRegion}
+                        {this.ProfitParRegion()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -811,7 +914,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle3[0]}>
                     <Collapse isOpen={this.state.accordion3[0]}>
                       <CardBody>
-                        {this.state.adherentParSecteur}
+                        {this.AdherentParSecteur()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -819,7 +922,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle3[1]}>
                     <Collapse isOpen={this.state.accordion3[1]}>
                       <CardBody>
-                        {this.state.adherentParRegion}
+                        {this.AdherentParRegion()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -827,7 +930,7 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle3[2]}>
                     <Collapse isOpen={this.state.accordion3[2]}>
                       <CardBody>
-                        {this.state.adherentParSexe}
+                        {this.AdherentParSexe()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -861,14 +964,14 @@ class Dashboard extends Component {
                   <Col Style={this.state.displayStyle4[0]}>
                     <Collapse isOpen={this.state.accordion4[0]}>
                       <CardBody>
-                        {this.state.communication}
+                        {this.Communication()}
                       </CardBody>
                     </Collapse>
                   </Col>
                   <Col Style={this.state.displayStyle4[1]}>
                     <Collapse isOpen={this.state.accordion4[1]}>
                       <CardBody>
-                        {this.state.canal}
+                        {this.Canal()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -897,7 +1000,7 @@ class Dashboard extends Component {
                   <Col>
                     <Collapse isOpen={true}>
                       <CardBody>
-                        {this.state.vente}
+                        {this.Vente()}
                       </CardBody>
                     </Collapse>
                   </Col>
@@ -905,7 +1008,6 @@ class Dashboard extends Component {
               </Collapse>
             </Card>
           </Col>
-
 
           <Col xs="3">
           <Card>
@@ -927,7 +1029,7 @@ class Dashboard extends Component {
                 <Col>
                   <Collapse isOpen={true}>
                     <CardBody>
-                      {this.state.formation}
+                      {this.Formation()}
                     </CardBody>
                   </Collapse>
                 </Col>
@@ -956,7 +1058,7 @@ class Dashboard extends Component {
                 <Col>
                   <Collapse isOpen={true}>
                     <CardBody>
-                      {this.state.evenement}
+                      {this.Evenement()}
                     </CardBody>
                   </Collapse>
                 </Col>
@@ -972,20 +1074,7 @@ class Dashboard extends Component {
               <CardHeader className="bg-dark">
                 <h1 className="display-4">Liste des Coopératives au Maroc</h1>
               </CardHeader>
-              {this.state.coopsTable}
-              <hr className="p-0 mt-n3"/>
-              <Card className="m-0 p-0 border-0 align-items-center">
-                <Pagination>
-                  <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
-
-                  <PaginationItem active><PaginationLink tag="button">1</PaginationLink></PaginationItem>
-                  <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
-                  <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
-                  <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
-
-                  <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
-                </Pagination>
-              </Card>
+              {this.CoopsTable()}
           </Card>
           </Col>
         </Row>
