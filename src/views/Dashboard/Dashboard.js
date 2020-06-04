@@ -486,6 +486,26 @@ class Dashboard extends Component {
     )
   }
 
+  NumberAdherenetParSexe(type,index){
+    let ret=[0,0];
+    let sum=0;
+    let id=parseInt(index)+1;
+    this.state.Cooperatives.forEach(element=>{
+      let idType;
+      if(type===0) idType=element.idSecteur;
+      else idType=element.idRegion;
+
+      if(idType===id){
+        this.state.Membres.forEach(member=>{
+          if(member.idCooperative===element.id)
+            if(member.sexe==="Homme"){ret[0]++}
+          sum++;
+        })
+      }
+    })
+    ret[1]=sum-ret[0];
+    return ret;
+  }
   NumberAdherenet(type,index){
     let ret=0;
     let id=parseInt(index)+1;
@@ -511,11 +531,11 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomSecteur}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberAdherenet(0,index)}<span className="text-muted small">
-              ({100*this.NumberAdherenet(0,index)/this.state.Membres.length}%)</span></span>
+              ({this.NumberAdherenetParSexe(0,index)[0]}|{this.NumberAdherenetParSexe(0,index)[1]})</span></span>
                     </div>
                     <div className="progress-group-bars">
-                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenet(0,index)/this.state.Membres.length} />
-                      <Progress className="progress-xs" color="white" value="100" />
+                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenetParSexe(0,index)[0]/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="white" value={100*this.NumberAdherenetParSexe(0,index)[1]/this.state.Membres.length} />
                     </div>
                   </div>)}
           )}
@@ -531,11 +551,11 @@ class Dashboard extends Component {
                     <div className="progress-group-header">
                       <span className="title">{element.nomRegion}</span>
                       <span className="ml-auto font-weight-bold">{this.NumberAdherenet(1,index)}<span className="text-muted small">
-              ({100*this.NumberAdherenet(1,index)/this.state.Membres.length}%)</span></span>
+              ({this.NumberAdherenetParSexe(1,index)[0]}|{this.NumberAdherenetParSexe(1,index)[1]})</span></span>
                     </div>
                     <div className="progress-group-bars">
-                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenet(1,index)/this.state.Membres.length} />
-                      <Progress className="progress-xs" color="white" value="100" />
+                      <Progress className="progress-xs" color="info" value={100*this.NumberAdherenetParSexe(1,index)[0]/this.state.Membres.length} />
+                      <Progress className="progress-xs" color="white" value={100*this.NumberAdherenetParSexe(1,index)[1]/this.state.Membres.length} />
                     </div>
                   </div>)}
           )}
@@ -812,7 +832,7 @@ class Dashboard extends Component {
                   <Col><h2 >Coopérative</h2></Col>
                   <Col><h1 className="mx-2 text-right"><i className=" icon-people"/></h1></Col>
                 </Row>
-                <h1 className="mt-n3 mb-3" ><strong>12.5k</strong></h1>
+                <h1 className="mt-n3 mb-3" ><strong>{this.state.Cooperatives.length}</strong></h1>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '100px' }}>
                   <Line data={cardChartData3} options={cardChartOpts3} />
                 </div>
@@ -852,7 +872,7 @@ class Dashboard extends Component {
                   <Col><h2>Profit</h2></Col>
                   <Col><h1 className="mx-2 text-right"><i className="icon-graph"/></h1></Col>
                 </Row>
-                <h1 className="mt-n3 mb-3" ><strong>53.5k</strong></h1>
+                <h1 className="mt-n3 mb-3" ><strong>{this.SumProfit()}</strong></h1>
                 <div className="mt-n5 mb-n3 mx-n3" style={{ height: '108px' }}>
                   <Line data={cardChartData3} options={cardChartOpts1} />
                 </div>
@@ -892,7 +912,7 @@ class Dashboard extends Component {
                   <Col><h2>Adhérent</h2></Col>
                   <Col><h1 className="mx-2 text-right"><i className="icon-user"/></h1></Col>
                 </Row>
-                <h1 className="mt-n3 mb-3"><strong>53.1K</strong></h1>
+                <h1 className="mt-n3 mb-3"><strong>{this.state.Membres.length}</strong></h1>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '100px' }}>
                   <Bar data={cardChartData3} options={cardChartOpts4} />
                 </div>
@@ -945,7 +965,7 @@ class Dashboard extends Component {
                   <Col><h4 className="ml-n2">Communication</h4></Col>
                   <Col><h3 className="mr-n3 text-right"><i className=" icon-people"/></h3></Col>
                 </Row>
-                <h3 className="mb-3" ><strong>12.5k</strong></h3>
+                <h3 className="mb-3" ><strong>{this.state.Communications.length}</strong></h3>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
                   <Line data={cardChartData3} options={cardChartOpts3} />
                 </div>
@@ -984,7 +1004,7 @@ class Dashboard extends Component {
                   <Col><h4 >Ventes</h4></Col>
                   <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
                 </Row>
-                <h3 className="mb-3" ><strong>12.5k</strong></h3>
+                <h3 className="mb-3" ><strong>{this.SumVente()}</strong></h3>
                 <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
                   <Line data={cardChartData3} options={cardChartOpts3} />
                 </div>
@@ -1013,7 +1033,7 @@ class Dashboard extends Component {
                 <Col><h4 >Formations</h4></Col>
                 <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
               </Row>
-              <h3 className="mb-3" ><strong>12.5k</strong></h3>
+              <h3 className="mb-3" ><strong>{this.state.Formations.length}</strong></h3>
               <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
                 <Line data={cardChartData3} options={cardChartOpts3} />
               </div>
@@ -1042,7 +1062,7 @@ class Dashboard extends Component {
                 <Col><h4 >Evénements</h4></Col>
                 <Col><h3 className="mx-2 text-right"><i className=" icon-people"/></h3></Col>
               </Row>
-              <h3 className="mb-3" ><strong>12.5k</strong></h3>
+              <h3 className="mb-3" ><strong>{this.state.Evenements.length}</strong></h3>
               <div className="mt-n5 mb-n2 mx-n3" style={{ height: '50px' }}>
                 <Line data={cardChartData3} options={cardChartOpts3} />
               </div>
