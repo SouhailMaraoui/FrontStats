@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { sha256 } from 'js-sha256';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 
 class Login extends Component {
@@ -35,9 +36,9 @@ class Login extends Component {
     const link=this.state.API_LINK;
     const user=this.state.user;
 
+    user.motDePasse=sha256(user.motDePasse);
     axios.post(link+'user/login/',user).then((response)=>{
       if(response.data!==""){
-        console.log(response.data)
         this.props.handleLogin(response.data);
         if(response.data.role==="admin")
         this.props.history.push("/dashboard");

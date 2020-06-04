@@ -600,8 +600,8 @@ class Dashboard extends Component {
     return(
         <div>
           <Row>
-            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-primary"><h6>Hommes: {100*this.NumberAdherentSexe()[0]/this.state.Membres.length}%</h6></Card></Col>
-            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-danger"><h6>Femmes: {100*this.NumberAdherentSexe()[1]/this.state.Membres.length}%</h6></Card></Col>
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-primary"><h6>Hommes: {Math.floor(100*this.NumberAdherentSexe()[0]/this.state.Membres.length)}%</h6></Card></Col>
+            <Col xs="6"><Card className="text-center pt-2 mx-n2 btn-outline-danger"><h6>Femmes: {Math.floor(100*this.NumberAdherentSexe()[1]/this.state.Membres.length)}%</h6></Card></Col>
 
               <Doughnut data={this.doughnutSexe()} options={doughnutOpts} height={100}/>
           </Row>

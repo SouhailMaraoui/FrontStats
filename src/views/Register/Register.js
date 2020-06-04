@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { sha256 } from 'js-sha256';
 import {Button, Card, CardBody, ButtonGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, TabPane,CardHeader,Collapse, TabContent, Row } from 'reactstrap';
 
 class Register extends Component {
@@ -304,6 +305,8 @@ class Register extends Component {
     let newAdmin=this.state.newAdmin;
     let newMembers=this.state.newMembres;
     let newUser=this.state.newUser;
+
+    newUser.motDePasse=(sha256(newUser.motDePasse));
 
     newAdress.idVille=this.state.Villes[this.state.selectedVille].id;
     newCooperative.idSecteur=this.state.Secteurs[this.state.selectedSecteur].id;
